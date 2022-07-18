@@ -1,0 +1,28 @@
+{
+  "name": "a-philosophy-of-software-design",
+  "version": "0.0.0",
+  "description": "A Philosophy of Software Design",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vitepress dev docs",
+    "build": "vitepress build docs",
+    "serve": "vitepress serve docs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lamb/a-philosophy-of-software-design.git"
+  },
+  "keywords": [
+    "software",
+    "design"
+  ],
+  "author": "John Ousterhout",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/lamb/a-philosophy-of-software-design/issues"
+  },
+  "homepage": "https://github.com/lamb/a-philosophy-of-software-design#readme",
+  "devDependencies": {
+    "vitepress": "^1.0.0-alpha.4"
+  }
+}
