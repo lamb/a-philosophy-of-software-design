@@ -1,0 +1,1 @@
+import{_ as e,c as a,o,a as t}from"./app.6a0d2e9e.js";const m=JSON.parse('{"title":"\u524D\u8A00","description":"","frontmatter":{},"headers":[],"relativePath":"preface.md","lastUpdated":1660227628000}'),r={name:"preface.md"},p=t("",13),s=[p];function n(c,i,d,_,h,f){return o(),a("div",null,s)}var g=e(r,[["render",n]]);export{m as __pageData,g as default};
