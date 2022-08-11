@@ -2,7 +2,7 @@ export default {
     appearance: true,
     base: '/a-philosophy-of-software-design/',
     lang: 'zh-CN',
-    title: '匠心软件设计',
+    title: '软件设计哲学',
     lastUpdated: true,
     themeConfig: {
         sidebar: [{
