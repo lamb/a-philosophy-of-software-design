@@ -1,6 +1,7 @@
 <img src="./cover.jpg" style="width: 38%" />
 
 A Philosophy of Software Design, 2nd Edition
+
 软件设计哲学 第二版
 
 John Ousterhout
