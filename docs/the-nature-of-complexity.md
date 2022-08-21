@@ -1,4 +1,4 @@
-# Chapter 2 The Nature of Complexity
+# 第二章 复杂度的本质
 
 This book is about how to design software systems to minimize their complexity. The first step is to understand the enemy. Exactly what is “complexity”? How can you tell if a system is unnecessarily complex? What causes systems to become complex? This chapter will address those questions at a high level; subsequent chapters will show you how to recognize complexity at a lower level, in terms of specific structural features.
 
