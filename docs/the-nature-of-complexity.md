@@ -1,22 +1,24 @@
 # 第二章 复杂度的本质
 
-This book is about how to design software systems to minimize their complexity. The first step is to understand the enemy. Exactly what is “complexity”? How can you tell if a system is unnecessarily complex? What causes systems to become complex? This chapter will address those questions at a high level; subsequent chapters will show you how to recognize complexity at a lower level, in terms of specific structural features.
+这本书是关于如何设计软件系统并尽可能降低其复杂度。第一步是去了解敌人。究竟什么是“复杂度”？如何判断一个系统是否不必要的复杂？什么导致系统变得复杂？本章将在较高层次上讨论这些问题；后续章节将展示如何在较低层次上根据特定的结构特征来识别复杂度。
 
-The ability to recognize complexity is a crucial design skill. It allows you to identify problems before you invest a lot of effort in them, and it allows you to make good choices among alternatives. It is easier to tell whether a design is simple than it is to create a simple design, but once you can recognize that a system is too complicated, you can use that ability to guide your design philosophy towards simplicity. If a design appears complicated, try a different approach and see if that is simpler. Over time, you will notice that certain techniques tend to result in simpler designs, while others correlate with complexity. This will allow you to produce simpler designs more quickly.
+识别复杂度的能力是一项极为重要的设计技能。它可以让你在投入大量工作量之前识别问题，并使你可以在替代方案中做出好的选择。判断一个设计是否简单比创建一个简单的设计更容易，但当你可以辨别出一个系统太复杂，你的设计哲学就可以在这种能力的指引下趋向简单。如果一个设计看起来很复杂，尝试一个不同的方法并看看这是否简单点。随着时间的推移，你会察觉到某些技术会使设计更简单，而其他的与复杂度相关。这将使你能够更快速地做更简单的设计。
 
-This chapter also lays out some basic assumptions that provide a foundation for the rest of the book. Later chapters take the material of this chapter as given and use it to justify a variety of refinements and conclusions.
+本章还列出了一些基本假设，为本书的其余部分提供基础。后面的章节将本章的材料作为假设事实，并用其来论证各种改进和推论。
 
-## 2.1 Complexity defined
+## 2.1 复杂度的定义
 
-For the purposes of this book, I define “complexity” in a practical way. **Complexity is anything related to the structure of a software system that makes it hard to understand and modify the system.** Complexity can take many forms. For example, it might be hard to understand how a piece of code works; it might take a lot of effort to implement a small improvement, or it might not be clear which parts of the system must be modified to make the improvement; it might be difficult to fix one bug without introducing another. If a software system is hard to understand and modify, then it is complicated; if it is easy to understand and modify, then it is simple.
+出于本书的目的，我以实用的方式定义“复杂度”。**复杂度是与软件系统结构相关使其难以理解和修改的任何东西**。复杂度可以有多种形式。例如，它可能是很难理解一段代码是如何运转的；可能是做了大量的努力才实现一个小小地改进；或者可能是不清楚修改系统的哪部分才能获得改进；可能是很难不引入其他问题的情况下修复一个缺陷。如果一个系统很难理解和修改，那么它是复杂的；如果它很容易理解和修改，那么它是简单的。
 
-You can also think of complexity in terms of cost and benefit. In a complex system, it takes a lot of work to implement even small improvements. In a simple system, larger improvements can be implemented with less effort.
+你也可以从成本与收益的角度来思考复杂度。在一个复杂的系统中，即使很小的改进也需要很大的工作量。在一个简单的系统中，可以较少的投入来实现较大的改进。
 
-Complexity is what a developer experiences at a particular point in time when trying to achieve a particular goal. It doesn’t necessarily relate to the overall size or functionality of the system. People often use the word “complex” to describe large systems with sophisticated features, but if such a system is easy to work on, then, for the purposes of this book, it is not complex. Of course, almost all large and sophisticated software systems are in fact hard to work on, so they also meet my definition of complexity, but this need not necessarily be the case. It is also possible for a small and unsophisticated system to be quite complex.
+复杂度是程序员在努力实现特定目标时在某一特定点的感受。它不一定与系统的整体大小或功能性有关。人们经常用“复杂”这个词来描述具有复杂特性的大型系统，但如果这样的系统很易对其工作，那么就本书而言，它并不是复杂。当然，几乎所有大型且复杂的软件系统实际上很难对其工作，所以它们也符合我对复杂度的定义，但不一定是这样。一个小而基本的系统也可能非常的复杂。
 
-Complexity is determined by the activities that are most common. If a system has a few parts that are very complicated, but those parts almost never need to be touched, then they don’t have much impact on the overall complexity of the system. To characterize this in a crude mathematical way:
+复杂度由最常见的活动决定。如果一个系统有一些非常复杂的部分，但是这些部分几乎不需要接触，那么它们对系统的整体复杂度没有太大影响。用简略的数学方式来描述：
 
-![](./figures/00009.gif)
+$$
+C=\sum_{p}c_pt_p
+$$
 
 The overall complexity of a system (C) is determined by the complexity of each part p (cp) weighted by the fraction of time developers spend working on that part (tp). Isolating complexity in a place where it will never be seen is almost as good as eliminating the complexity entirely.
 
