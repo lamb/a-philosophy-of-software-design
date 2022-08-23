@@ -40,5 +40,11 @@ export default {
             pattern: 'https://github.com/lamb/a-philosophy-of-software-design/edit/master/docs/:path',
             text: 'Edit this page on GitHub'
         }
+    },
+    markdown: {
+        config: (md) => {
+            // use more markdown-it plugins!
+            md.use(require('markdown-it-texmath'))
+        }
     }
 }
