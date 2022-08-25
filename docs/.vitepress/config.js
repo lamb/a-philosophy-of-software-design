@@ -43,8 +43,14 @@ export default {
     },
     markdown: {
         config: (md) => {
-            // use more markdown-it plugins!
-            md.use(require('markdown-it-texmath'))
+            md.use(require('markdown-it-texmath'), { katexOptions: { output: "html" } })
+        }
+    },
+    vue: {
+        template: {
+            compilerOptions: {
+                isCustomElement: (tag) => ["eqn", "eq"].includes(tag)
+            }
         }
     }
 }
