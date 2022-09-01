@@ -10,7 +10,7 @@ export default {
                 { text: '0 前言', link: '/preface' },
                 { text: '1 介绍', link: '/introduction' },
                 { text: '2 复杂度的本质', link: '/the-nature-of-complexity' },
-                { text: '3 Working Code Isn’t Enough', link: '/working-code-is-not-enough' },
+                { text: '3 不能满足于可运行的代码', link: '/working-code-is-not-enough' },
                 { text: '4 Modules Should Be Deep', link: '/modules-should-be-deep' },
                 { text: '5 Information Hiding (and Leakage)', link: '/information-hiding-and-leakage' },
                 { text: '6 General-Purpose Modules are Deeper', link: '/general-purpose-modules-are-deeper' },
