@@ -1,4 +1,4 @@
-# Chapter 5 Information Hiding (and Leakage)
+# 第五章 信息隐藏（和泄漏）
 
 Chapter 4 argued that modules should be deep. This chapter, and the next few that follow, discuss techniques for creating deep modules.
 

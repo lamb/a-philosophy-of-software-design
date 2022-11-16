@@ -1,52 +1,52 @@
-# Chapter 4 Modules Should Be Deep
+# 第四章 模块应深厚
 
-One of the most important techniques for managing software complexity is to design systems so that developers only need to face a small fraction of the overall complexity at any given time. This approach is called *modular design*, and this chapter presents its basic principles.
+管理软件复杂度最重要的技术之一是对系统做设计以便开发人员在任何给定的时间**只需面对整体复杂度的一小部分**。这种方法称为模块化设计，本章介绍其基本原理。
 
-## 4.1 Modular design
+## 4.1 模块化设计
 
-In modular design, a software system is decomposed into a collection of modules that are relatively independent. Modules can take many forms, such as classes, subsystems, or services. In an ideal world, each module would be completely independent of the others: a developer could work in any of the modules without knowing anything about any of the other modules. In this world, the complexity of a system would be the complexity of its worst module.
+在模块化系统中，软件系统被分解为相对独立的模块集合。模块可采用多种形式，例如类、子系统或者服务。在理想世界中，每个模块都将完全独立于其他模块：开发人员可以在任何模块中工作而无需了解其他任何模块。在这个世界中，一个系统的复杂度大概是其最差模块的复杂度。
 
-Unfortunately, this ideal is not achievable. Modules must work together by calling each others’s functions or methods. As a result, modules must know something about each other. There will be dependencies between the modules: if one module changes, other modules may need to change to match. For example, the arguments for a method create a dependency between the method and any code that invokes the method. If the required arguments change, all invocations of the method must be modified to conform to the new signature. Dependencies can take many other forms, and they can be quite subtle. The goal of modular design is to minimize the dependencies between modules.
+不幸的是，这种理想是无法实现的。模块必须通过调用彼此的函数或方法来协调工作。于是**模块必须相互了解。模块间存在依赖关系**：如果一个模块发生更改，其他模块则可能需要做相匹配的修改。例如，方法参数在方法与调用该方法的所有代码之间创建了一个依赖关系。如果参数必须修改，那么所有调用该方法都必须修改来符合新签名。依赖关系可以采用许多其他形式，而且可能非常不易察觉。模块化设计的目标是**最小化模块间的依赖关系**。
 
-In order to manage dependencies, we think of each module in two parts: an interface and an *implementation*. The interface consists of everything that a developer working in a different module must know in order to use the given module. Typically, the interface describes what the module does but not how it does it. The implementation consists of the code that carries out the promises made by the interface. A developer working in a particular module must understand the interface and implementation of that module, plus the interfaces of any other modules invoked by the given module. A developer should not need to understand the implementations of modules other than the one he or she is working in.
+为了管理依赖关系，我们考虑把每个模块分为两个部分：接口与实现。接口包含在不同模块中工作的开发人员为了想使用给定模块而必须知道的所有内容。通常，接口描述模块做什么，而不是它如何做。实现由执行接口所做的承诺的代码组成。开发人员在特定模块中工作必须要了解该模块的接口和实现，以及该给定模块调用所有其他模块的接口。除了正在使用的模块以外开发人员无需了解其他模块的实现。
 
-Consider a module that implements balanced trees. The module probably contains sophisticated code for ensuring that the tree remains balanced. However, this complexity is not visible to users of the module. Users see a relatively simple interface for invoking operations to insert, remove, and fetch nodes in the tree. To invoke an insert operation, the caller need only provide the key and value for the new node; the mechanisms for traversing the tree and splitting nodes are not visible in the interface.
+仔细思考实现平衡树的一个模块。这个模块或许包含复杂的代码以确保树保持平衡。然而，复杂度对这个模块的用户是不可见的。用户可以看到一个相对简单的接口，用于调用在树中插入、删除和获取节点的操作。调用插入操作，调用者只需提供新节点的键和值；遍历树和拆分节点的机制在接口中不可见。
 
-For the purposes of this book, a module is any unit of code that has an interface and an implementation. Each class in an object-oriented programming language is a module. Methods within a class, or functions in a language that isn’t object-oriented, can also be thought of as modules: each of these has an interface and an implementation, and modular design techniques can be applied to them. Higher-level subsystems and services are also modules; their interfaces may take different forms, such as kernel calls or HTTP requests. Much of the discussion about modular design in this book focuses on designing classes, but the techniques and concepts apply to other kinds of modules as well.
+就本书而言，模式是一个具有接口和实现的代码单位。在面向对象编程语言中每个类都是一个模块。类中的方法或非面向对象语言中的函数也可以被认为是模块：它们每个都有接口和实现，且模块化设计技术可以应用于它们。更高级别的子系统和服务也是模块；它们的接口可能采用不同的形式，如内核调用或HTTP请求。本书中关于模块化设计的大部分讨论都集中在设计类上，但这些技术和思想也适用于其他类型的模块。
 
-The best modules are those whose interfaces are much simpler than their implementations. Such modules have two advantages. First, a simple interface minimizes the complexity that a module imposes on the rest of the system. Second, if a module is modified in a way that does not change its interface, then no other module will be affected by the modification. If a module’s interface is much simpler than its implementation, there will be many aspects of the module that can be changed without affecting other modules.
+最好的模块是接口比实现简单很多的模块。这样的模块有两个优点。首先，一个简单的接口可将模块强加给其他系统的复杂度降至最低。其次，如果一个模块以不改变其接口的方式进行修改，那么没有其他模块会受到修改的影响。如果一个模块的接口比实现简单得很多，那么这个模块的许多方面都可以被修改而不影响其他模块。
 
-## 4.2 What’s in an interface?？
+## 4.2 接口中有什么
 
-The interface to a module contains two kinds of information: formal and informal. The formal parts of an interface are specified explicitly in the code, and some of these can be checked for correctness by the programming language. For example, the formal interface for a method is its signature, which includes the names and types of its parameters, the type of its return value, and information about exceptions thrown by the method. Most programming languages ensure that each invocation of a method provides the right number and types of arguments to match its signature. The formal interface for a class consists of the signatures for all of its public methods, plus the names and types of any public variables.
+一个模块的接口包含两类信息：形式的和非形式的。一个接口的形式部分在代码中明确指定，其中一些可以通过编程语言检查正确性。例如，一个方法的接口形式是它的签名，其包括参数的名称和类型、返回值类型以及该方法引发的异常信息。大多数编程语言确保方法的每次调用都提供正确数量和类型的参数以匹配其签名。一个类的接口形式包含其所有公共方法的签名和所有公共变量的名称与类型。
 
-Each interface also includes informal elements. These are not specified in a way that can be understood or enforced by the programming language. The informal parts of an interface include its high-level behavior, such as the fact that a function deletes the file named by one of its arguments. If there are constraints on the usage of a class (perhaps one method must be called before another), these are also part of the class’s interface. In general, if a developer needs to know a particular piece of information in order to use a module, then that information is part of the module’s interface. The informal aspects of an interface can only be described using comments, and the programming language cannot ensure that the description is complete or accurate1. For most interfaces the informal aspects are larger and more complex than the formal aspects.
+每个接口还包含非形式部分。这些不是以编程语言可以理解或执行的方式指定的。接口的非形式部分包含其高级行为，例如一个函数删名称为其参数之一的文件。如果一个类的使用有约束（假定一个方法必须在另一个方法之前调用），这些也是类接口的一部分。通常，如果开发人员需要知道特定的信息才能使用一个模块，则该信息是模块接口的一部分。接口的非形式信息方面只能用注释来描述，编程语言不能确保描述是完整的或精确的^1。对于大多数接口，非形式方面比形式方面更大更复杂。
 
-One of the benefits of a clearly specified interface is that it indicates exactly what developers need to know in order to use the associated module. This helps to eliminate the “unknown unknowns” problem described in Section 2.2.
+接口被定义清晰的好处之一是它可以准确地指示开发人员使用相关模块所需知道的内容。这有助于消除第2.2节中描述的“未知的未知”问题。
 
-## 4.3 Abstractions
+## 4.3 抽象
 
-The term *abstraction* is closely related to the idea of modular design. **An abstraction is a simplified view of an entity, which omits unimportant details.** Abstractions are useful because they make it easier for us to think about and manipulate complex things.
+*抽象*这个词语与模块化设计思想紧密相关。**抽象是实体的简化视图，其中省略了不重要的细节**。抽象是很有用的，因为它们使我们更容易思考和处理复杂的事情。
 
-In modular programming, each module provides an abstraction in form of its interface. The interface presents a simplified view of the module’s functionality; the details of the implementation are unimportant from the standpoint of the module’s abstraction, so they are omitted from the interface.
+在模块化编程中，每个模块以接口的形式提供抽象。接口提供了模块功能的简化视图；从模块抽象的角度来看，实现的细节并不重要，因此在接口中将其省略。
 
-In the definition of abstraction, the word “unimportant” is crucial. The more unimportant details that are omitted from an abstraction, the better. However, a detail can only be omitted from an abstraction if it is unimportant. An abstraction can go wrong in two ways. First, it can include details that are not really important; when this happens, it makes the abstraction more complicated than necessary, which increases the cognitive load on developers using the abstraction. The second error is when an abstraction omits details that really are important. This results in obscurity: developers looking only at the abstraction will not have all the information they need to use the abstraction correctly. An abstraction that omits important details is a false abstraction: it might appear simple, but in reality it isn’t. The key to designing abstractions is to understand what is important, and to look for designs that minimize the amount of information that is important.
+在抽象的定义中，“无关紧要”这个词至关重要。从抽象中省略的不重要的细节越多越好。但如果细节不重要，则只能将其从抽象中省略。抽象可能会从两个方向出错。首先，它可以包含并非真正重要的细节；当这种情况发生时，它会使抽象变得不必要的复杂，从而增加了使用抽象开发人员的认知负荷。第二个错误是抽象忽略了真正重要的细节。这将导致莫名：开发人员只看这个抽象无法获得正确使用此抽象所需的全部信息。忽略了重要细节的抽象是错误的抽象：它可能看起来很简单，但实际上并非如此。设计抽象的关键是理解什么是重要的，并寻找使重要信息的量最小化的设计。
 
-As an example, consider a file system. The abstraction provided by a file system omits many details, such as the mechanism for choosing which blocks on a storage device to use for the data in a given file. These details are unimportant to users of the file system (as long as the system provides adequate performance). However, some of the details of a file system’s implementation are important to users. Most file systems cache data in main memory, and they may delay writing new data to the storage device in order to improve performance. Some applications, such as databases, need to know exactly when data is written through to storage, so they can ensure that data will be preserved after system crashes. Thus, the rules for flushing data to secondary storage must be visible in the file system’s interface.
+例如细想一个文件系统。文件系统提供的抽象忽略了许多细节，比如用于保存指定文件数据如何选择存储设备块的机制。这些详细信息对于文件系统用户并不重要（只要系统提供足够的性能即可）。但是，其中一些文件系统的实现细节对用户很重要。大多数文件系统把数据缓存在主内存中，并且它们会延迟将新数据写入存储设备以提升性能。一些应用程序，例如数据库，需要确切地知道数据何时写入存储，这样它们可以确保在系统崩溃后保存数据。因此，刷新数据到副存储的规则必须在文件系统接口中可见。
 
-We depend on abstractions to manage complexity not just in programming, but pervasively in our everyday lives. A microwave oven contains complex electronics to convert alternating current into microwave radiation and distribute that radiation throughout the cooking cavity. Fortunately, users see a much simpler abstraction, consisting of a few buttons to control the timing and intensity of the microwaves. Cars provide a simple abstraction that allows us to drive them without understanding the mechanisms for electrical motors, battery power management, anti-lock brakes, cruise control, and so on.
+我们不仅在编程中依赖抽象来管理复杂度，而且在我们日常生活中也很普遍。微波炉包含复杂的电子元件将交流电转换为微波辐射，并将辐射分散在整个烹饪室中。幸运的是，用户看到一个非常简单的抽象，由一些控制微波计时和强度的按钮组成。汽车提供了一个简单的抽象让我们在不了解电机、电池电源管理、防抱死制动、巡航控制等机制的情况下驾驶它们。
 
-## 4.4 Deep modules
+## 4.4 深厚模块
 
-The best modules are those that provide powerful functionality yet have simple interfaces. I use the term *deep* to describe such modules. To visualize the notion of depth, imagine that each module is represented by a rectangle, as shown in Figure 4.1. The area of each rectangle is proportional to the functionality implemented by the module. The top edge of a rectangle represents the module’s interface; the length of that edge indicates the complexity of the interface. The best modules are deep: they have a lot of functionality hidden behind a simple interface. A deep module is a good abstraction because only a small fraction of its internal complexity is visible to its users.
+优秀的模块是提供强大功能但接口简单。我用*深厚*这个词来描述这样的模块。为了形象化深度的概念，想象每个模块都由一个矩阵表示，如图4.1所示。每个矩形的面积和模块实现的功能成正比。矩形顶部边线代表模块接口；边线长度表示接口的复杂度。优秀的模块是深厚的：它们包含许多功能隐藏在简单接口后面。深厚模块是一个优质的抽象，因为其内部复杂度只有很小一部分对其用户可见。
 
 ![](./figures/00012.jpeg)
 
-Figure 4.1: Deep and shallow modules. The best modules are deep: they allow a lot of functionality to be accessed through a simple interface. A shallow module is one with a relatively complex interface, but not much functionality: it doesn’t hide much complexity.
+图4.1:深厚与浅薄模块。优秀的模块是深厚的：它们允许通过简单的接口访问许多功能。浅薄模块是具有相对复杂接口，但功能不多：它没有隐藏太多的复杂度。
 
-Module depth is a way of thinking about cost versus benefit. The benefit provided by a module is its functionality. The cost of a module (in terms of system complexity) is its interface. A module’s interface represents the complexity that the module imposes on the rest of the system: the smaller and simpler the interface, the less complexity that it introduces. The best modules are those with the greatest benefit and the least cost. Interfaces are good, but more, or larger, interfaces are not necessarily better!
+模块深度是思量成本与收益的一种方式。模块提供的收益是其功能性。模块的成本（在系统复杂度方面）是它的接口。模块的接口代表模块强加给其他系统的复杂度：接口越小越简单，引入复杂度越小。优秀的模块是那些收益巨大但成本较小。优质接口变更多或更大后并不一定会更好！
 
-The mechanism for file I/O provided by the Unix operating system and its descendants, such as Linux, is a beautiful example of a deep interface. There are only five basic system calls for I/O, with simple signatures:
+Unix操作系统及其衍生（如Linux）提供的文件I/O机制是一个深厚接口的出色实例。I/O只有五个基础的系统方法，具有简单的签名：
 
 ```c
 int open(const char* path, int flags, mode_t permissions);
@@ -56,31 +56,29 @@ off_t lseek(int fd, off_t offset, int referencePosition);
 int close(int fd);
 ```
 
-The open system call takes a hierarchical file name such as `/a/b/c` and returns an integer *file descriptor*, which is used to reference the open file. The other arguments for open provide optional information such as whether the file is being opened for reading or writing, whether a new file should be created if there is no existing file, and access permissions for the file, if a new file is created. The read and write system calls transfer information between buffer areas in the application’s memory and the file; close ends the access to the file. Most files are accessed sequentially, so that is the default; however, random access can be achieved by invoking the lseek system call to change the current access position.
+open方法接受一个分层文件名（如/a/b/c）然后返回一个整型**文件描述符**，用于引用打开的文件。open方法的其他参数提供了可选项，例如是否打开文件进行读取或写入，如果不存在文件是否新建文件，以及如果新建了文件具有什么访问权限。read和write方法在应用程序的内存缓冲区与文件间做信息转换；close结束对文件的访问。大多数文件是按顺序访问的，因此这是默认；但可以通过调用系统方法lseek更改当前访问位置来实现随机访问。
 
-A modern implementation of the Unix I/O interface requires hundreds of thousands of lines of code, which address complex issues such as:
+Unix I/O接口的现代化实现需要数十万行代码，来解决复杂问题如：
 
-- How are files represented on disk in order to allow efficient access?
-- How are directories stored, and how are hierarchical path names processed to find the files they refer to?
-- How are permissions enforced, so that one user cannot modify or delete another user’s files?
-- How are file accesses implemented? For example, how is functionality divided between interrupt handlers and background code, and how do these two elements communicate safely?
-- What scheduling policies are used when there are concurrent accesses to multiple files?
-- How can recently accessed file data be cached in memory in order to reduce the number of disk accesses?
-- How can a variety of different secondary storage devices, such as disks and flash drives, be incorporated into a single file system?
+- 如何在磁盘上表示文件以便高效访问？
+- 如何存储目录和如何处理分层路径名以查找它们所引用的文件？
+- 如何权限强制，使一个用户无法修改和删除其他用户的文件？
+- 如何实现文件访问？例如，如何设计分配中断处理器与后台代码，以及两部分如何安全通信？
+- 有哪些调度策略可以在并发访问多个文件时使用？
+- 如何将最近访问文件数据缓存在内存中以减少磁盘访问次数？
+- 如何将各种不同的副存储设备（如磁盘和闪存）合并到一个文件系统中？
 
----
+所有这些及更多的问题都由Unix文件系统来实现；它们对调用系统方法的编程人员是不可见的。多年来Unix I/O接口的实现发生了根本性的发展，但五个基础的内核调用方法并没有变化。
 
-All of these issues, and many more, are handled by the Unix file system implementation; they are invisible to programmers who invoke the system calls. Implementations of the Unix I/O interface have evolved radically over the years, but the five basic kernel calls have not changed.
+深厚模块的另一个实例是编程语言中的垃圾回收器比如Go或Java。这个模块根本没有接口；它在幕后默默工作回收不再使用的内存。给系统增加垃圾回收实际上会缩小其整体接口，因为它消除了释放对象的接口。垃圾回收器的实现非常复杂，但对使用此语言的编程人员这些复杂度会被隐藏。
 
-Another example of a deep module is the garbage collector in a language such as Go or Java. This module has no interface at all; it works invisibly behind the scenes to reclaim unused memory. Adding garbage collection to a system actually shrinks its overall interface, since it eliminates the interface for freeing objects. The implementation of a garbage collector is quite complex, but that complexity is hidden from programmers using the language.
+Unix I/O和垃圾收集器等深厚模块提供了强大的抽象，因为它们易于使用但隐藏了重要实现的复杂度。
 
-Deep modules such as Unix I/O and garbage collectors provide powerful abstractions because they are easy to use, yet they hide significant implementation complexity.
+## 4.5 浅薄模块
 
-## 4.5 Shallow modules
+从另一方面来说，浅薄模块是指与它提供的功能相比接口相对复杂的模块。例如，实现链表的类是浅薄的。操作链表不需要太多的代码（插入或删除一个元素只需几行），因此链表的抽象不会隐藏很多细节。链表接口的复杂度几乎与其实现的复杂度一样。浅薄类有时是不可避免的，然而它们在管理复杂度方面并没有提供太多帮助。
 
-On the other hand, a shallow module is one whose interface is relatively complex in comparison to the functionality that it provides. For example, a class that implements linked lists is shallow. It doesn’t take much code to manipulate a linked list (inserting or deleting an element takes only a few lines), so the linked list abstraction doesn’t hide very many details. The complexity of a linked list interface is nearly as great as the complexity of its implementation. Shallow classes are sometimes unavoidable, but they don’t provide help much in managing complexity.
-
-Here is an extreme example of a shallow method, taken from a project in a software design class:
+这是一个浅薄方法的极端示例，取自软件设计课上的一个项目：
 
 ```java
 private void addNullValueForAttribute(String attribute) {
@@ -88,38 +86,37 @@ private void addNullValueForAttribute(String attribute) {
 }
 ```
 
-From the standpoint of managing complexity, this method makes things worse, not better. The method offers no abstraction, since all of its functionality is visible through its interface. For example, callers probably need to know that the attribute will be stored in the data variable. It is no simpler to think about the interface than to think about the full implementation. If the method is documented properly, the documentation will be longer than the method’s code. It even takes more keystrokes to invoke the method than it would take for a caller to manipulate the data variable directly. The method adds complexity (in the form of a new interface for developers to learn) but provides no compensating benefit.
+从管理复杂度的角度来看，这种方法只会让事情变得更糟，而不是更好。该方法不提供抽象，因为其所有功能都从接口可见。例如，调用者可能需要知悉属性会存储在变量data中。思考接口并不比思考完整实现更简单。如果方法被正确地记录，文档将比方法的代码还要长。调用者调用这个方法所需敲击按键数甚至比直接操作变量data还多。该方法增加了复杂度（以新接口的形式供开发人员学习），但没有提供任何补偿增益。
 
-img Red Flag: Shallow Module img
+🚩 Red Flag: Shallow Module 🚩
+A shallow module is one whose interface is complicated relative to the functionality it provides. Shallow modules don't help mushin the battle against complexity, because the benefit they provide (not having to learn about how they work internally) is negated by the cost of learning and using their interfaces. Small modules tend to be shallow.
 
-A shallow module is one whose interface is complicated relative to the functionality it provides. Shallow modules don’t help much in the battle against complexity, because the benefit they provide (not having to learn about how they work internally) is negated by the cost of learning and using their interfaces. Small modules tend to be shallow.
+浅薄模块是接口比提供的功能复杂的模块。浅薄模块在对抗复杂度方面无济于事，因为它们提供的增益（不必了解它们内部如何工作）被学习和使用它们接口的成本一笔抹杀。小模块往往是浅薄的。
 
-## 4.6 Classitis
+## 4.6 类泛滥
 
-Unfortunately, the value of deep classes is not widely appreciated today. The conventional wisdom in programming is that classes should be *small*, not deep. Students are often taught that the most important thing in class design is to break up larger classes into smaller ones. The same advice is often given about methods: “Any method longer than N lines should be divided into multiple methods” (N can be as low as 10). This approach results in large numbers of shallow classes and methods, which add to overall system complexity.
+不幸的是，深厚类的价值在今天并未得到广泛认可。在编程上墨守成规，类应*小*，而不是深。学生经常被教导，在类的设计中最重要的是将大的类拆分成小的类。同样的建议也经常给予方法：“任何长度超过N行的方法应被拆分成多个方法”（N可低至10）。这种要求导致了大量的浅薄类和方法，这增加了系统总体复杂度。
 
-The extreme of the “classes should be small” approach is a syndrome I call *classitis*, which stems from the mistaken view that “classes are good, so more classes are better.” In systems suffering from classitis, developers are encouraged to minimize the amount of functionality in each new class: if you want more functionality, introduce more classes. Classitis may result in classes that are individually simple, but it increases the complexity of the overall system. Small classes don’t contribute much functionality, so there have to be a lot of them, each with its own interface. These interfaces accumulate to create tremendous complexity at the system level. Small classes also result in a verbose programming style, due to the boilerplate required for each class.
+“类应小”这种极端方式我称之为*类泛滥*综合症，它源于错误的认知，即“类好，所以越多越好”。在一个患有类泛滥的系统中，鼓励开发人员将每个新类中的功能数量降至最小：如果想要更多的功能，那么引入更多的类。类泛滥可能会使类独立简单，但它增加了系统总体复杂度。小类没有添加多少功能，所以必须有很多类，而且每个都有自己的接口。这些接口在系统级别上累积起巨大的复杂度。小类同样会导致连篇累牍的编程风格，因为每个类都需要范例。
 
-## 4.7 Examples: Java and Unix I/O
+## 4.7 示例：Java 和 Unix I/O
 
-One of the most visible examples of classitis today is the Java class library. The Java language doesn’t require lots of small classes, but a culture of classitis seems to have taken root in the Java programming community. For example, to open a file in order to read serialized objects from it, you must create three different objects:
+如今最明显的类泛滥实例之一是Java类库。Java语言不需要大量的小类，但类泛滥文化似乎已经在Java编程社区根深蒂固。例如，为了打开一个文件以读取序列化对象，必须创建三个不同的对象：
 
 ```java
 FileInputStream fileStream = new FileInputStream(fileName);
-
 BufferedInputStream bufferedStream = new BufferedInputStream(fileStream);
-
 ObjectInputStream objectStream = new ObjectInputStream(bufferedStream);
 ```
 
-A FileInputStream object provides only rudimentary I/O: it is not capable of performing buffered I/O, nor can it read or write serialized objects. The BufferedInputStream object adds buffering to a FileInputStream, and the ObjectInputStream adds the ability to read and write serialized objects. The first two objects in the code above, fileStream and bufferedStream, are never used once the file has been opened; all future operations use objectStream.
+FileInputStream对象仅提供基础的I/O：它不能执行缓冲的I/O，也不能读取或写入序列化对象。BufferedInputStream对象向FileInputStream添加缓冲，ObjectInputStream添加读写序列化对象的能力。上面代码中的前两个对象fileStream和bufferedStream，一旦文件被打开就永远不再使用；未来所有的操作都使用objectStream。
 
-It is particularly annoying (and error-prone) that buffering must be requested explicitly by creating a separate BufferedInputStream object; if a developer forgets to create this object, there will be no buffering and I/O will be slow. Perhaps the Java developers would argue that not everyone wants to use buffering for file I/O, so it shouldn’t be built into the base mechanism. They might argue that it’s better to keep buffering separate, so people can choose whether or not to use it. Providing choice is good, but **interfaces should be designed to make the common case as simple as possible** (see the formula on page 6). Almost every user of file I/O will want buffering, so it should be provided by default. For those few situations where buffering is not desirable, the library can provide a mechanism to disable it. Any mechanism for disabling buffering should be cleanly separated in the interface (for example, by providing a different constructor for FileInputStream, or through a method that disables or replaces the buffering mechanism), so that most developers do not even need to be aware of its existence.
+令人深恶痛绝（且容易出错）的是缓冲必须通过创建一个单独的BufferedInputStream对象来显示请求；如果开发人员忘记创建这个对象，将没有缓冲于是I/O会缓慢。或许Java开发人员会争辩说，并不是每个人都希望对文件I/O使用缓冲，所以不应该内置在基础设置中。他们可能会争辩说，保持缓冲独立比较好，这样就可以自由选择是否使用它了。提供选择是好的，但**接口设计应保证常见情形尽可能简单**（见第6页的公式）。几乎每个文件I/O的用户都需要缓冲，因此默认应提供缓冲。对于那些不需要缓冲的少数情况，可以提供禁用它的方法。任何禁用缓冲的机制都应在接口中完全分离（例如通过为FileInputStream提供不同的构造函数，或通过禁用或更新缓冲的方法），这样大多数开发人员甚至不需要意识到它的存在。
 
-In contrast, the designers of the Unix system calls made the common case simple. For example, they recognized that sequential I/O is most common, so they made that the default behavior. Random access is still relatively easy to do, using the lseek system call, but a developer doing only sequential access need not be aware of that mechanism. If an interface has many features, but most developers only need to be aware of a few of them, the effective complexity of that interface is just the complexity of the commonly used features.
+相比之下，Unix系统调用的设计者使常见情形变得简单。例如，他们识别出顺序I/O最常见，因此他们将其作为默认行为。随机访问仍可以使用lseek系统调用很容易的完成，但开发人员只做顺序访问就不需要知道这种机制。如果一个接口有很多功能，但大多数开发人员只需要知道其中的一些功能，那么这个接口的有效复杂度只是常用特性的复杂度。
 
-## 4.8 Conclusion
+## 4.8 结论
 
-By separating the interface of a module from its implementation, we can hide the complexity of the implementation from the rest of the system. Users of a module need only understand the abstraction provided by its interface. The most important issue in designing classes and other modules is to make them deep, so that they have simple interfaces for the common use cases, yet still provide significant functionality. This maximizes the amount of complexity that is concealed.
+通过从模块的实现中分离接口，我们可以向其他系统隐藏实现的复杂度。模块的用户只需要了解其接口提供的抽象。在设计类和模块时最重要的问题是使它们深厚，为常见情形保持简单接口，但仍提供强大功能。这样充分隐藏了复杂度。
 
-1There exist languages, mostly in the research community, where the overall behavior of a method or function can be described formally using a specification language. The specification can be checked automatically to ensure that it matches the implementation. An interesting question is whether such a formal specification could replace the informal parts of an interface. My current opinion is that an interface described in English is likely to be more intuitive and understandable for developers than one written in a formal specification language.
+现在有这样的定义语言，主要在研究社区中，可以规范地描述方法或函数的整体行为。可以自动检查定义确保与实现相匹配。一个有趣的问题说，一份这样的规范定义是否可以取代接口的非形式部分。我目前的观点是，接口使用英语来描述比用规范的定义语言更直观和易于理解。
